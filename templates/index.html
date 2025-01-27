@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to MP4 Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .loading {
+            display: none;
+        }
+        .loading.active {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Convertidor de YouTube a MP4</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="convertForm">
+                            <div class="mb-3">
+                                <label for="url" class="form-label">URL de YouTube</label>
+                                <input type="url" class="form-control" id="url" name="url" 
+                                       placeholder="https://www.youtube.com/watch?v=..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Convertir
+                                <span class="loading spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </button>
+                        </form>
+                        
+                        <div id="status" class="mt-3" style="display: none;">
+                            <div class="alert" role="alert"></div>
+                        </div>
+                        
+                        <div id="downloadSection" class="mt-3" style="display: none;">
+                            <button id="downloadBtn" class="btn btn-success">
+                                <i class="fas fa-download"></i> Descargar MP4
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <script>
+        $(document).ready(function() {
+            const form = $('#convertForm');
+            const submitBtn = form.find('button[type="submit"]');
+            const loading = $('.loading');
+            const statusDiv = $('#status');
+            const statusAlert = statusDiv.find('.alert');
+            const downloadSection = $('#downloadSection');
+
+            form.on('submit', function(e) {
+                e.preventDefault();
+                
+                // Mostrar loading y deshabilitar botón
+                submitBtn.prop('disabled', true);
+                loading.addClass('active');
+                
+                statusDiv.show();
+                statusAlert.removeClass('alert-success alert-danger').addClass('alert-info');
+                statusAlert.text('Convirtiendo video...');
+                downloadSection.hide();
+                
+                $.ajax({
+                    url: '/convert',
+                    method: 'POST',
+                    data: {
+                        url: $('#url').val()
+                    },
+                    success: function(response) {
+                        statusAlert.removeClass('alert-info alert-danger').addClass('alert-success');
+                        statusAlert.text(response.message);
+                        downloadSection.show();
+                        
+                        $('#downloadBtn').off('click').on('click', function() {
+                            window.location.href = '/download/' + response.filename;
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON;
+                        statusAlert.removeClass('alert-info alert-success').addClass('alert-danger');
+                        statusAlert.text(response.message);
+                    },
+                    complete: function() {
+                        // Ocultar loading y habilitar botón
+                        submitBtn.prop('disabled', false);
+                        loading.removeClass('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
