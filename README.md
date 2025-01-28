@@ -1,5 +1,5 @@
 # VIdeo_converter
-Este es un ejemplo de trabajo para los estudios en Python que es converir un video en internet en un formato MP4, realizarlo en línea y con la posibilidad de poder  bajarlo a una carpeta determinada.
+Este es un ejemplo de trabajo para los estudios en Python que es convertir un video en internet en un formato MP4, realizarlo en línea y con la posibilidad de poder  bajarlo a una carpeta determinada.
 “Este es un caso solo para estudiar la forma de programación en Python, en ningún caso sobrepasa a atenta con la propiedad intelectual bajo la norma y Licencia MIT”
 
 Se toma como ejemplo la plataforma de Youtube utilizando video de libre uso.
